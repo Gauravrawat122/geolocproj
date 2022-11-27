@@ -9,6 +9,7 @@
 	crossorigin="anonymous">
 	
 </script>
+
 <link
 	href="https://fonts.googleapis.com/css2?family=Poppins&display=swap">
 
@@ -69,11 +70,19 @@ html, body {
 #mode {
 	color: blue;
 }
+
+.weather {
+	text-align: center;
+	font-size: 1em;
+}
+
+.weather h2 {
+	margin-bottom: 0;
+	align-items: center;
+} /* .weather img{ transform: scale(2); } */
 </style>
 </head>
 <body>
-
-
 	<div class="jumbotron">
 		<div class="container-fluid">
 
@@ -106,6 +115,11 @@ html, body {
 					</select>
 
 				</form>
+				<form id="form">
+					<input type="text" id="search" placeholder="Search By Loaction"
+						autocomplete="off">
+				</form>
+				<main id="main"></main>
 
 
 
@@ -115,6 +129,8 @@ html, body {
 
 					</button>
 				</div>
+
+
 			</div>
 		</div>
 	</div>
@@ -227,6 +243,61 @@ html, body {
 
 		var input2 = document.getElementById("to");
 		var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
-	</script>
+
+       const apiKey = "2f82c29f0281b868271a59736da45f89";
+
+const search = document.getElementById('search');
+  
+const url = (city)=> `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+
+async function getWeatherByLocation(city){
+     
+         const resp = await fetch(url(city), {
+             origin: "cros" });
+         const respData = await resp.json();
+     
+           addWeatherToPage(respData);
+          
+     }
+
+      function addWeatherToPage(data){
+          const temp = Ktoc(data.main.temp);
+
+          const weather = document.createElement('div')
+          weather.classList.add('weather');
+
+          weather.innerHTML = `
+          <h2><img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /> ${temp}°C <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /></h2>
+          <small>${data.weather[0].main}</small>
+          
+          `;
+
+
+        //   cleanup 
+          main.innerHTML= "";
+           main.appendChild(weather);
+      };
+
+
+     function Ktoc(K){
+         return Math.floor(K - 273.15);
+     }
+
+
+
+     form.addEventListener('submit',(e) =>{
+        e.preventDefault();
+
+        const city = search.value;
+
+        if(city){
+            getWeatherByLocation(city)
+        }
+
+     });
+    </script>
 </body>
 </html>
+
+

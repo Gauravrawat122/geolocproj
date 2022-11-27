@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,20 +8,33 @@
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <script src="https://kit.fontawesome.com/ab2155e76b.js"
 	crossorigin="anonymous">
-
+	
 </script>
+<link rel="preconnect" href="https://fonts.gstatic.com">
 <link
 	href="https://fonts.googleapis.com/css2?family=Poppins&display=swap">
 
 <!-- using css -->
 <style>
 /*add font family,*/
-body {
-	color: #5bc0de;
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
 
 .fa-map-marker-alt, .fa-dot-circle {
 	color: #5bc0de;
+}
+
+.card {
+	background: #000000d0;
+	color: white;
+	padding: 2em;
+	border-radius: 30px;
+	width: 100%;
+	max-width: 420px;
+	margin: 1em;
 }
 
 .jumbotron {
@@ -37,14 +51,29 @@ body {
 	text-align: center;
 }
 
-#googleMap {
-	width: 100%;
-	height: 410px;
-	margin: 18px auto;
+#floating-panel {
+	position: absolute;
+	top: 10px;
+	left: 25%;
+	z-index: 5;
+	background-color: #fff;
+	padding: 5px;
+	border: 1px solid #999;
+	text-align: center;
+	font-family: 'Roboto', 'sans-serif';
+	line-height: 30px;
+	padding-left: 10px;
+	opacity: 0.8;
 }
 
+#googleMap {
+	width: 100%;
+	height: 800px;
+	margin: 18px auto;
+}
 /*output box*/
-#output {
+#
+output {
 	text-align: center;
 	font-size: 2em;
 	margin: 20px auto;
@@ -53,6 +82,81 @@ body {
 #mode {
 	color: blue;
 }
+
+.card {
+	background: #000000d0;
+	color: white;
+	padding: 2em;
+	border-radius: 30px;
+	width: 100%;
+	max-width: 420px;
+	margin: 1em;
+}
+
+.search {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+button {
+	margin: 0.5em;
+	border-radius: 50%;
+	border: none;
+	height: 44px;
+	width: 44px;
+	outline: none;
+	background: #7c7c7c2b;
+	color: white;
+	cursor: pointer;
+	transition: 0.2s ease-in-out;
+}
+
+input.search-bar {
+	border: none;
+	outline: none;
+	padding: 0.4em 1em;
+	border-radius: 24px;
+	background: #7c7c7c2b;
+	color: white;
+	font-family: inherit;
+	font-size: 105%;
+	width: calc(100% - 100px);
+}
+
+button:hover {
+	background: #7c7c7c6b;
+}
+
+h1.temp {
+	margin: 0;
+	margin-bottom: 0.4em;
+}
+
+.flex {
+	display: flex;
+	align-items: center;
+}
+
+.description {
+	text-transform: capitalize;
+	margin-left: 8px;
+}
+
+.weather.loading {
+	visibility: hidden;
+	max-height: 20px;
+	position: relative;
+}
+
+.weather.loading:after {
+	visibility: visible;
+	content: "Loading...";
+	color: white;
+	position: absolute;
+	top: 0;
+	left: 20px;
+}
 </style>
 </head>
 <body>
@@ -60,42 +164,69 @@ body {
 
 	<div class="jumbotron">
 		<div class="container-fluid">
-			<h1>Machine learning based travelling assistant using google api</h1>
-			<p>PROVIDE LOCATION AND DESTINATION</p>
-			<form class="form-horizontal">
-				<div class="form-group">
-					<label for="from" class="col-xs-2 control-label"><i
-						class="far fa-dot-circle"></i></label>
-					<div class="col-xs-4">
-						<input type="text" id="from" placeholder="Origin"
-							class="form-control">
+
+			<div id="floating-panel">
+				<p>PROVIDE LOCATION AND DESTINATION</p>
+
+				<form class="form-horizontal">
+					<div class="form-group">
+
+						<div class="col-xs-4">
+							<input type="text" id="from" placeholder="Origin"
+								class="form-control">
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
+					<div class="form-group">
 
-					<label for="to" class="col-xs-2 control-label"><i
-						class="fas fa-map-marker-alt"> </i></label>
-					<div class="col-xs-4">
-						<input type="text" id="to" placeholder="Destination"
-							class="form-control">
+						<div class="col-xs-4">
+							<input type="text" id="to" placeholder="Destination"
+								class="form-control">
+
+
+						</div>
 					</div>
 
+				</form>
+
+
+
+				<div class="col-xs-offset-2 col-xs-10">
+					<button class="btn btn-info btn-lg " onclick="routecalculation();">
+						<i class="fas fa-map-signs"></i>
+					</button>
 				</div>
-
-			</form>
-
-			<div class="col-xs-offset-2 col-xs-10">
-				<button class="btn btn-info btn-lg " onclick="routecalculation();">
-					<i class="fas fa-map-signs"></i>
-				</button>
 			</div>
 		</div>
-		<div class="container-fluid">
-			<div id="googleMap"></div>
-			<div id="output"></div>
-		</div>
-
 	</div>
+	
+	<div class="container-fluid">
+		<div id="googleMap"></div>
+		<div id="output"></div>
+	</div>
+	<div class="card">
+		<div class="search">
+			<input type="text" class="search-bar" placeholder="Search">
+			<button>
+				<svg stroke="currentColor" fill="currentColor" stroke-width="0"
+					viewBox="0 0 1024 1024" height="1.5em" width="1.5em"
+					xmlns="http://www.w3.org/2000/svg">
+        
+        </svg>
+			</button>
+		</div>
+		<div class="weather loading">
+			<h2 class="city">Weather in Denver</h2>
+			<h1 class="temp">51°C</h1>
+			<div class="flex">
+				<img src="https://openweathermap.org/img/wn/04n.png" alt=""
+					class="icon" />
+				<div class="description">Cloudy</div>
+			</div>
+			<div class="humidity">Humidity: 60%</div>
+			<div class="wind">Wind speed: 6.2 km/h</div>
+		</div>
+	</div>
+
 
 	<!-- javascript for google API access -->
 	<script
@@ -193,3 +324,6 @@ body {
 	</script>
 </body>
 </html>
+
+
+
