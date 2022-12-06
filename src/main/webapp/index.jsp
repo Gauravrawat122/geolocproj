@@ -246,12 +246,12 @@ html, body {
 
        const apiKey = "2f82c29f0281b868271a59736da45f89";
 
-const search = document.getElementById('search');
+       const search = document.getElementById('search');
   
-const url = (city)=> `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+       const url = (city)=> `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
 
-async function getWeatherByLocation(city){
+       async function getWeatherByLocation(city){
      
          const resp = await fetch(url(city), {
              origin: "cros" });

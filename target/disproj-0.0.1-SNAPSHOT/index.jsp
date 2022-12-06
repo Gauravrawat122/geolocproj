@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +9,7 @@
 	crossorigin="anonymous">
 	
 </script>
-<link rel="preconnect" href="https://fonts.gstatic.com">
+
 <link
 	href="https://fonts.googleapis.com/css2?family=Poppins&display=swap">
 
@@ -25,16 +24,6 @@ html, body {
 
 .fa-map-marker-alt, .fa-dot-circle {
 	color: #5bc0de;
-}
-
-.card {
-	background: #000000d0;
-	color: white;
-	padding: 2em;
-	border-radius: 30px;
-	width: 100%;
-	max-width: 420px;
-	margin: 1em;
 }
 
 .jumbotron {
@@ -68,12 +57,11 @@ html, body {
 
 #googleMap {
 	width: 100%;
-	height: 800px;
+	height: 700px;
 	margin: 18px auto;
 }
 /*output box*/
-#
-output {
+#output {
 	text-align: center;
 	font-size: 2em;
 	margin: 20px auto;
@@ -83,90 +71,23 @@ output {
 	color: blue;
 }
 
-.card {
-	background: #000000d0;
-	color: white;
-	padding: 2em;
-	border-radius: 30px;
-	width: 100%;
-	max-width: 420px;
-	margin: 1em;
+.weather {
+	text-align: center;
+	font-size: 1em;
 }
 
-.search {
-	display: flex;
+.weather h2 {
+	margin-bottom: 0;
 	align-items: center;
-	justify-content: center;
-}
-
-button {
-	margin: 0.5em;
-	border-radius: 50%;
-	border: none;
-	height: 44px;
-	width: 44px;
-	outline: none;
-	background: #7c7c7c2b;
-	color: white;
-	cursor: pointer;
-	transition: 0.2s ease-in-out;
-}
-
-input.search-bar {
-	border: none;
-	outline: none;
-	padding: 0.4em 1em;
-	border-radius: 24px;
-	background: #7c7c7c2b;
-	color: white;
-	font-family: inherit;
-	font-size: 105%;
-	width: calc(100% - 100px);
-}
-
-button:hover {
-	background: #7c7c7c6b;
-}
-
-h1.temp {
-	margin: 0;
-	margin-bottom: 0.4em;
-}
-
-.flex {
-	display: flex;
-	align-items: center;
-}
-
-.description {
-	text-transform: capitalize;
-	margin-left: 8px;
-}
-
-.weather.loading {
-	visibility: hidden;
-	max-height: 20px;
-	position: relative;
-}
-
-.weather.loading:after {
-	visibility: visible;
-	content: "Loading...";
-	color: white;
-	position: absolute;
-	top: 0;
-	left: 20px;
-}
+} /* .weather img{ transform: scale(2); } */
 </style>
 </head>
 <body>
-
-
 	<div class="jumbotron">
 		<div class="container-fluid">
 
 			<div id="floating-panel">
-				<p>PROVIDE LOCATION AND DESTINATION</p>
+				<p>PROVIDE ORIGIN AND DESTINATION</p>
 
 				<form class="form-horizontal">
 					<div class="form-group">
@@ -185,46 +106,37 @@ h1.temp {
 
 						</div>
 					</div>
+					<b>Mode of Travel</b> <select id="mode">
+						<option value="DRIVING">Driving</option>
+						<option value="WALKING">Walking</option>
+						<option value="BICYCLING">Bicycling</option>
+						<option value="TRANSIT">Transit</option>
+
+					</select>
 
 				</form>
+				<form id="form">
+					<input type="text" id="search" placeholder="Search By Loaction"
+						autocomplete="off">
+				</form>
+				<main id="main"></main>
+
 
 
 
 				<div class="col-xs-offset-2 col-xs-10">
-					<button class="btn btn-info btn-lg " onclick="routecalculation();">
-						<i class="fas fa-map-signs"></i>
+					<button class="btn btn-info btn-lg " onclick="routecalculation();">ENTER
+
 					</button>
 				</div>
+
+
 			</div>
 		</div>
 	</div>
-	
 	<div class="container-fluid">
 		<div id="googleMap"></div>
 		<div id="output"></div>
-	</div>
-	<div class="card">
-		<div class="search">
-			<input type="text" class="search-bar" placeholder="Search">
-			<button>
-				<svg stroke="currentColor" fill="currentColor" stroke-width="0"
-					viewBox="0 0 1024 1024" height="1.5em" width="1.5em"
-					xmlns="http://www.w3.org/2000/svg">
-        
-        </svg>
-			</button>
-		</div>
-		<div class="weather loading">
-			<h2 class="city">Weather in Denver</h2>
-			<h1 class="temp">51°C</h1>
-			<div class="flex">
-				<img src="https://openweathermap.org/img/wn/04n.png" alt=""
-					class="icon" />
-				<div class="description">Cloudy</div>
-			</div>
-			<div class="humidity">Humidity: 60%</div>
-			<div class="wind">Wind speed: 6.2 km/h</div>
-		</div>
 	</div>
 
 
@@ -246,7 +158,7 @@ h1.temp {
 		};
 		var mapOptions = {
 			center : myLatLng,
-			zoom : 8,
+			zoom : 14,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 
 		};
@@ -263,14 +175,24 @@ h1.temp {
 
 		//bind the DirectionsRenderer to the map
 		directionsDisplay.setMap(map);
+		
+        routecalculation(directionsService, directionsDisplay);
+		
+		
+		document.getElementById("mode").addEventListener("change", () => {
+		
+			calculateAndDisplayRoute(directionsService, directionsDisplay);
+		
+		});
 
 		//define routecalculation() function
 		function routecalculation() {
+			const selectedMode = document.getElementById("mode").value;
 			//create request
 			var request = {
 				origin : document.getElementById("from").value,
 				destination : document.getElementById("to").value,
-				travelMode : google.maps.TravelMode.DRIVING, //WALKING, BYCYCLING, TRANSIT
+				travelMode : google.maps.TravelMode.WALKING, //WALKING, BYCYCLING, TRANSIT
 				unitSystem : google.maps.UnitSystem.IMPERIAL
 			}
 
@@ -288,7 +210,7 @@ h1.temp {
 											+ document.getElementById("from").value
 											+ ".<br />To: "
 											+ document.getElementById("to").value
-											+ ".<br /> Driving distance <i class='fas fa-road'></i> : "
+											+ ".<br /> distance <i class='fas fa-road'></i> : "
 											+ result.routes[0].legs[0].distance.text
 											+ ".<br />Duration <i class='fas fa-hourglass-start'></i> : "
 											+ result.routes[0].legs[0].duration.text
@@ -321,9 +243,61 @@ h1.temp {
 
 		var input2 = document.getElementById("to");
 		var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
-	</script>
+
+       const apiKey = "2f82c29f0281b868271a59736da45f89";
+
+       const search = document.getElementById('search');
+  
+       const url = (city)=> `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+
+       async function getWeatherByLocation(city){
+     
+         const resp = await fetch(url(city), {
+             origin: "cros" });
+         const respData = await resp.json();
+     
+           addWeatherToPage(respData);
+          
+     }
+
+      function addWeatherToPage(data){
+          const temp = Ktoc(data.main.temp);
+
+          const weather = document.createElement('div')
+          weather.classList.add('weather');
+
+          weather.innerHTML = `
+          <h2><img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /> ${temp}°C <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" /></h2>
+          <small>${data.weather[0].main}</small>
+          
+          `;
+
+
+        //   cleanup 
+          main.innerHTML= "";
+           main.appendChild(weather);
+      };
+
+
+     function Ktoc(K){
+         return Math.floor(K - 273.15);
+     }
+
+
+
+     form.addEventListener('submit',(e) =>{
+        e.preventDefault();
+
+        const city = search.value;
+
+        if(city){
+            getWeatherByLocation(city)
+        }
+
+     });
+    </script>
 </body>
 </html>
-
 
 
